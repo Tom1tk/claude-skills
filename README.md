@@ -48,3 +48,15 @@ Inside any Claude Code session:
 ## Re-installing / updating
 
 Re-run the one-liner. It overwrites existing files with the latest from `main`.
+
+## My personal usage
+
+```bash
+useradd -m -s /bin/bash user
+passwd user
+usermod -aG sudo user
+su - user
+
+claude --dangerously-skip-permissions
+```
+

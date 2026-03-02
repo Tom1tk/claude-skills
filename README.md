@@ -4,11 +4,19 @@ Personal Claude Code skills registry. Installs global instructions and custom sl
 
 ## Install
 
+**Fresh machine** — installs Claude Code first, then the skills:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/bootstrap.sh | bash
+```
+
+**Claude Code already installed** — just install the skills:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.sh | bash
 ```
 
-That's it. Open a new Claude Code session and the commands are available.
+Then open a new Claude Code session and the commands are available.
 
 ## What gets installed
 

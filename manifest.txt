@@ -2,3 +2,9 @@ review
 refactor
 ticket
 explain
+debug
+security-audit
+readme-update
+dead-code
+dependency-audit
+commit

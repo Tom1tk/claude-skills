@@ -16,6 +16,12 @@ curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/bootstrap
 curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.sh | bash
 ```
 
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.ps1 | iex
+```
+
 Then open a new Claude Code session and the commands are available.
 
 ## What gets installed

@@ -19,6 +19,24 @@ curl -fsSL "$REPO_RAW/manifest.txt" | while read cmd; do
   echo "✓ /$cmd installed"
 done
 
+# Install rules (preserving directory structure)
+curl -fsSL "$REPO_RAW/rules-manifest.txt" | while read path; do
+  [ -z "$path" ] && continue
+  dest="$CLAUDE_DIR/$path"
+  mkdir -p "$(dirname "$dest")"
+  curl -fsSL "$REPO_RAW/$path" -o "$dest"
+  echo "✓ $path installed"
+done
+
+# Install skills (preserving directory structure)
+curl -fsSL "$REPO_RAW/skills-manifest.txt" | while read path; do
+  [ -z "$path" ] && continue
+  dest="$CLAUDE_DIR/$path"
+  mkdir -p "$(dirname "$dest")"
+  curl -fsSL "$REPO_RAW/$path" -o "$dest"
+  echo "✓ $path installed"
+done
+
 echo ""
 echo "Done! Skills installed to $CLAUDE_DIR"
 echo "Run 'claude' in any project to use them."

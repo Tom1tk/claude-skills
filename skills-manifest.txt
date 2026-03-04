@@ -1,0 +1,5 @@
+skills/liquid-glass-design/SKILL.md
+skills/python-patterns/SKILL.md
+skills/swift-actor-persistence/SKILL.md
+skills/swift-protocol-di-testing/SKILL.md
+skills/swiftui-patterns/SKILL.md

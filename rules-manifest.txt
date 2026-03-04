@@ -1,0 +1,9 @@
+rules/common/coding-style.md
+rules/common/hooks.md
+rules/common/patterns.md
+rules/python/coding-style.md
+rules/python/hooks.md
+rules/python/patterns.md
+rules/swift/coding-style.md
+rules/swift/hooks.md
+rules/swift/patterns.md

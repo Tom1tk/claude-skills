@@ -20,6 +20,28 @@ foreach ($cmd in ($manifest -split "`r?`n")) {
     Write-Host "v /$cmd installed"
 }
 
+# Install rules (preserving directory structure)
+$rulesManifest = (Invoke-WebRequest -Uri "$RepoRaw/rules-manifest.txt").Content
+foreach ($path in ($rulesManifest -split "`r?`n")) {
+    $path = $path.Trim()
+    if ($path -eq '') { continue }
+    $dest = "$ClaudeDir\$($path -replace '/', '\')"
+    New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+    Invoke-WebRequest -Uri "$RepoRaw/$path" -OutFile $dest
+    Write-Host "v $path installed"
+}
+
+# Install skills (preserving directory structure)
+$skillsManifest = (Invoke-WebRequest -Uri "$RepoRaw/skills-manifest.txt").Content
+foreach ($path in ($skillsManifest -split "`r?`n")) {
+    $path = $path.Trim()
+    if ($path -eq '') { continue }
+    $dest = "$ClaudeDir\$($path -replace '/', '\')"
+    New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+    Invoke-WebRequest -Uri "$RepoRaw/$path" -OutFile $dest
+    Write-Host "v $path installed"
+}
+
 Write-Host ""
 Write-Host "Done! Skills installed to $ClaudeDir"
 Write-Host "Open a new Claude Code session to use them."

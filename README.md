@@ -22,7 +22,13 @@ curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.s
 irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.ps1 | iex
 ```
 
-Then open a new Claude Code session and the commands are available.
+The install script will also configure the [claude-hud](https://github.com/jarrodwatts/claude-hud) status line plugin. After it completes, open Claude Code and run:
+
+```
+/plugin install claude-hud
+```
+
+Then restart Claude Code. The HUD will appear in your terminal status line automatically.
 
 ## What gets installed
 
@@ -31,6 +37,13 @@ Then open a new Claude Code session and the commands are available.
 | Path | Purpose |
 |------|---------|
 | `~/.claude/CLAUDE.md` | Global instructions: workflow orchestration, task management, core principles |
+| `~/.claude/settings.json` | Plugin config: claude-hud status line, marketplace registration |
+
+### Plugins
+
+| Plugin | What it does |
+|--------|-------------|
+| [claude-hud](https://github.com/jarrodwatts/claude-hud) | Terminal status line showing context fill %, token rate, active tools, and git branch. Requires `/plugin install claude-hud` on first use. |
 
 ### Commands (slash commands)
 
@@ -104,6 +117,10 @@ Rules and skills activate automatically — no commands needed.
 
 - **Rule**: add the file under `rules/<lang>/` and append its path to `rules-manifest.txt`
 - **Skill**: add `skills/<name>/SKILL.md` and append its path to `skills-manifest.txt`
+
+## Updating settings
+
+`settings.json` in this repo is deep-merged into `~/.claude/settings.json` on install — existing keys are preserved. To add a new plugin or setting, edit `settings.json` and the install scripts will pick it up on next run.
 
 ## Re-installing / updating
 

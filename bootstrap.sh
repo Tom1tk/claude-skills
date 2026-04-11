@@ -28,6 +28,55 @@ curl -fsSL "$REPO_RAW/manifest.txt" | while read cmd; do
   echo "✓ /$cmd installed"
 done
 
-# ── 3. Done ───────────────────────────────────────────────────────────────────
+# ── 3. Merge settings (claude-hud plugin) ────────────────────────────────────
+SETTINGS_FILE="$CLAUDE_DIR/settings.json"
+TMP_PATCH=$(mktemp)
+curl -fsSL "$REPO_RAW/settings.json" -o "$TMP_PATCH"
+
+if command -v python3 &>/dev/null; then
+  python3 - "$SETTINGS_FILE" "$TMP_PATCH" <<'PYEOF'
+import json, sys
+settings_path, patch_path = sys.argv[1], sys.argv[2]
+
+def deep_merge(base, patch):
+    for k, v in patch.items():
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            deep_merge(base[k], v)
+        else:
+            base[k] = v
+    return base
+
+try:
+    with open(settings_path) as f:
+        existing = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    existing = {}
+
+with open(patch_path) as f:
+    patch = json.load(f)
+
+with open(settings_path, 'w') as f:
+    json.dump(deep_merge(existing, patch), f, indent=2)
+    f.write('\n')
+PYEOF
+  echo "✓ settings.json merged (claude-hud)"
+elif command -v jq &>/dev/null; then
+  if [ -f "$SETTINGS_FILE" ]; then
+    jq -s '.[0] * .[1]' "$SETTINGS_FILE" "$TMP_PATCH" > "${SETTINGS_FILE}.tmp" \
+      && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
+  else
+    cp "$TMP_PATCH" "$SETTINGS_FILE"
+  fi
+  echo "✓ settings.json merged (claude-hud)"
+else
+  echo "⚠ python3/jq not found — skipping settings.json merge"
+fi
+rm -f "$TMP_PATCH"
+
+# ── 4. Done ───────────────────────────────────────────────────────────────────
 echo ""
 echo "All done! Run 'claude' to start and log in on first use."
+echo ""
+echo "To finish claude-hud setup, open Claude Code and run:"
+echo "  /plugin install claude-hud"
+echo "Then restart Claude Code."

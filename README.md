@@ -135,6 +135,10 @@ usermod -aG sudo user
 su - user
 
 claude --dangerously-skip-permissions
+
+OR
+
+IS_SANDBOX=1  claude --dangerously-skip-permissions
 ```
 
 ## Credits

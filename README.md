@@ -134,11 +134,11 @@ passwd user
 usermod -aG sudo user
 su - user
 
-claude --dangerously-skip-permissions
+CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
 
 OR
 
-IS_SANDBOX=1  claude --dangerously-skip-permissions
+IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
 ```
 
 ## Credits

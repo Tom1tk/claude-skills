@@ -144,4 +144,5 @@ IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
 ## Credits
 
 Rules and skills sourced from: [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code/).
-Claude.md sourced from: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md)
+
+Claude.md sourced from: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md).

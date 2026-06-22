@@ -37,7 +37,7 @@ curl -fsSL "$REPO_RAW/skills-manifest.txt" | while read path; do
   echo "✓ $path installed"
 done
 
-# Merge settings.json (claude-hud plugin config)
+# Merge settings.json (plugin config: claude-hud, ponytail, improve)
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 TMP_PATCH=$(mktemp)
 curl -fsSL "$REPO_RAW/settings.json" -o "$TMP_PATCH"
@@ -68,7 +68,7 @@ with open(settings_path, 'w') as f:
     json.dump(deep_merge(existing, patch), f, indent=2)
     f.write('\n')
 PYEOF
-  echo "✓ settings.json merged (claude-hud)"
+  echo "✓ settings.json merged (plugins)"
 elif command -v jq &>/dev/null; then
   if [ -f "$SETTINGS_FILE" ]; then
     jq -s '.[0] * .[1]' "$SETTINGS_FILE" "$TMP_PATCH" > "${SETTINGS_FILE}.tmp" \
@@ -76,7 +76,7 @@ elif command -v jq &>/dev/null; then
   else
     cp "$TMP_PATCH" "$SETTINGS_FILE"
   fi
-  echo "✓ settings.json merged (claude-hud)"
+  echo "✓ settings.json merged (plugins)"
 else
   echo "⚠ python3/jq not found — skipping settings.json merge"
 fi
@@ -85,6 +85,8 @@ rm -f "$TMP_PATCH"
 echo ""
 echo "Done! Skills installed to $CLAUDE_DIR"
 echo ""
-echo "To finish claude-hud setup, open Claude Code and run:"
-echo "  /plugin install claude-hud"
+echo "To finish plugin setup, open Claude Code and run:"
+echo "  /plugin install claude-hud@claude-hud"
+echo "  /plugin install ponytail@ponytail"
+echo "  /plugin install improve@improve"
 echo "Then restart Claude Code."

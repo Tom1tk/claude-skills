@@ -42,6 +42,46 @@ foreach ($path in ($skillsManifest -split "`r?`n")) {
     Write-Host "v $path installed"
 }
 
+# Merge settings.json (plugin config: claude-hud, ponytail, improve)
+$SettingsFile = "$ClaudeDir\settings.json"
+$patch = (Invoke-WebRequest -Uri "$RepoRaw/settings.json").Content | ConvertFrom-Json
+
+function Merge-JsonObject($Base, $Patch) {
+    foreach ($prop in $Patch.PSObject.Properties) {
+        $name = $prop.Name
+        $value = $prop.Value
+        $existingProp = $Base.PSObject.Properties[$name]
+        if ($existingProp -and $existingProp.Value -is [System.Management.Automation.PSCustomObject] -and $value -is [System.Management.Automation.PSCustomObject]) {
+            Merge-JsonObject -Base $existingProp.Value -Patch $value
+        } elseif ($existingProp) {
+            $Base.$name = $value
+        } else {
+            $Base | Add-Member -MemberType NoteProperty -Name $name -Value $value
+        }
+    }
+    return $Base
+}
+
+if (Test-Path $SettingsFile) {
+    try {
+        $existing = (Get-Content $SettingsFile -Raw) | ConvertFrom-Json
+    } catch {
+        $existing = New-Object PSObject
+    }
+} else {
+    $existing = New-Object PSObject
+}
+
+$merged = Merge-JsonObject -Base $existing -Patch $patch
+($merged | ConvertTo-Json -Depth 20) | Set-Content $SettingsFile
+Write-Host "v settings.json merged (plugins)"
+
 Write-Host ""
 Write-Host "Done! Skills installed to $ClaudeDir"
 Write-Host "Open a new Claude Code session to use them."
+Write-Host ""
+Write-Host "To finish plugin setup, open Claude Code and run:"
+Write-Host "  /plugin install claude-hud@claude-hud"
+Write-Host "  /plugin install ponytail@ponytail"
+Write-Host "  /plugin install improve@improve"
+Write-Host "Then restart Claude Code."

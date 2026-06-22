@@ -22,13 +22,15 @@ curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.s
 irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.ps1 | iex
 ```
 
-The install script will also configure the [claude-hud](https://github.com/jarrodwatts/claude-hud) status line plugin. After it completes, open Claude Code and run:
+The install script will also register the plugin marketplaces for [claude-hud](https://github.com/jarrodwatts/claude-hud), [ponytail](https://github.com/DietrichGebert/ponytail), and [improve](https://github.com/shadcn/improve). After it completes, open Claude Code and run:
 
 ```
-/plugin install claude-hud
+/plugin install claude-hud@claude-hud
+/plugin install ponytail@ponytail
+/plugin install improve@improve
 ```
 
-Then restart Claude Code. The HUD will appear in your terminal status line automatically.
+Then restart Claude Code.
 
 ## What gets installed
 
@@ -37,13 +39,17 @@ Then restart Claude Code. The HUD will appear in your terminal status line autom
 | Path | Purpose |
 |------|---------|
 | `~/.claude/CLAUDE.md` | Global instructions: workflow orchestration, task management, core principles |
-| `~/.claude/settings.json` | Plugin config: claude-hud status line, marketplace registration |
+| `~/.claude/settings.json` | Plugin config: status line, enabled plugins, marketplace registration |
 
 ### Plugins
 
 | Plugin | What it does |
 |--------|-------------|
-| [claude-hud](https://github.com/jarrodwatts/claude-hud) | Terminal status line showing context fill %, token rate, active tools, and git branch. Requires `/plugin install claude-hud` on first use. |
+| [claude-hud](https://github.com/jarrodwatts/claude-hud) | Terminal status line showing context fill %, token rate, active tools, and git branch. |
+| [ponytail](https://github.com/DietrichGebert/ponytail) | "Lazy senior dev" mode — pushes toward the simplest solution that works (stdlib first, no unrequested abstractions) before writing code. |
+| [improve](https://github.com/shadcn/improve) | Audits a codebase (bugs, security, perf, tech debt) and writes self-contained implementation plans to `plans/` for another agent or model to execute. Never edits code itself. |
+
+All three require a one-time `/plugin install <name>@<name>` inside Claude Code (see [Install](#install)) — the install script registers the marketplaces but can't install the plugin binaries itself.
 
 ### Commands (slash commands)
 

@@ -51,6 +51,8 @@ Then restart Claude Code.
 
 All three require a one-time `/plugin install <name>@<name>` inside Claude Code (see [Install](#install)) — the install script registers the marketplaces but can't install the plugin binaries itself.
 
+**Troubleshooting:** ponytail and claude-hud both run lifecycle hooks via Node.js. If `node` isn't on `PATH` (including the non-interactive shell PATH — a common gotcha with nvm/Nix), ponytail's mode tracking silently fails to activate and claude-hud's status line won't render. The install scripts warn if `node` is missing. Older Claude Code versions can also hit an `EXDEV: cross-device link not permitted` error installing claude-hud on Linux — the install scripts run `claude update` first to avoid it; if you still hit it, run `mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude` and retry the plugin install in that session.
+
 ### Commands (slash commands)
 
 | Command | Purpose |

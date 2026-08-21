@@ -5,6 +5,15 @@ REPO_RAW="https://raw.githubusercontent.com/Tom1tk/claude-skills/main"
 CLAUDE_DIR="$HOME/.claude"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
 
+# Update Claude Code if present — avoids known bugs on older versions
+# (e.g. claude-hud's EXDEV install error) and unlocks newer features
+# (e.g. outputStyle, added in 2.1.237)
+if command -v claude &>/dev/null; then
+  echo "Checking for Claude Code updates..."
+  claude update || true
+  echo ""
+fi
+
 echo "Installing Claude skills..."
 mkdir -p "$COMMANDS_DIR"
 
@@ -81,6 +90,16 @@ else
   echo "⚠ python3/jq not found — skipping settings.json merge"
 fi
 rm -f "$TMP_PATCH"
+
+if ! command -v node &>/dev/null; then
+  echo ""
+  echo "⚠ Node.js not found on PATH."
+  echo "  ponytail and claude-hud run lifecycle hooks via Node — without it,"
+  echo "  ponytail's mode tracking won't activate (non-blocking hook error on"
+  echo "  every prompt) and claude-hud's status line won't render."
+  echo "  Install Node.js, then confirm it's on PATH for non-interactive"
+  echo "  shells too (nvm/Nix users: this is a common gotcha)."
+fi
 
 echo ""
 echo "Done! Skills installed to $CLAUDE_DIR"

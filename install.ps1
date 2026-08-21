@@ -4,6 +4,15 @@ $RepoRaw    = "https://raw.githubusercontent.com/Tom1tk/claude-skills/main"
 $ClaudeDir  = "$HOME\.claude"
 $CommandsDir = "$ClaudeDir\commands"
 
+# Update Claude Code if present — avoids known bugs on older versions
+# (e.g. claude-hud's "no JavaScript runtime was found" setup error) and
+# unlocks newer features (e.g. outputStyle, added in 2.1.237)
+if (Get-Command claude -ErrorAction SilentlyContinue) {
+    Write-Host "Checking for Claude Code updates..."
+    claude update
+    Write-Host ""
+}
+
 Write-Host "Installing Claude skills..."
 New-Item -ItemType Directory -Force -Path $CommandsDir | Out-Null
 
@@ -75,6 +84,15 @@ if (Test-Path $SettingsFile) {
 $merged = Merge-JsonObject -Base $existing -Patch $patch
 ($merged | ConvertTo-Json -Depth 20) | Set-Content $SettingsFile
 Write-Host "v settings.json merged (plugins)"
+
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Host ""
+    Write-Host "! Node.js not found on PATH."
+    Write-Host "  ponytail and claude-hud run lifecycle hooks via Node - without it,"
+    Write-Host "  ponytail's mode tracking won't activate and claude-hud's setup will"
+    Write-Host "  fail with 'no JavaScript runtime was found'."
+    Write-Host "  Install Node.js LTS: winget install OpenJS.NodeJS.LTS"
+}
 
 Write-Host ""
 Write-Host "Done! Skills installed to $ClaudeDir"

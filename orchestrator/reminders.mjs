@@ -5,8 +5,8 @@ import fs from 'node:fs';
 const event = JSON.parse(fs.readFileSync(0, 'utf8'));
 
 const text = {
-  UserPromptSubmit: 'Orchestrator mode: plan the hard parts yourself, then delegate scoped work (finding and reading code, mechanical edits, tests, builds) to subagents with self-contained briefs.',
-  PostToolUse: 'That subagent result is unverified. Check the diff, files, or test output before relying on it or reporting it as done.',
+  UserPromptSubmit: 'Orchestrator mode: plan and make every design decision yourself; delegate scoped work (finding and reading code, mechanical edits, tests, builds, and implementing fully specified designs) to subagents with self-contained briefs.',
+  PostToolUse: 'That subagent result is unverified. Check the diff, files, or test output before relying on it or reporting it as done. If it was design work, hold it to your spec exactly and reject any deviation.',
 }[event.hook_event_name];
 
 if (text) {

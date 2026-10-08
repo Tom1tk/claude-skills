@@ -16,7 +16,14 @@ Subagents may help build what you designed, but they make no design decisions. B
 1. Make the decisions yourself: structure, names, exact text, styles and values, behaviour in each state.
 2. Write them into the brief as a spec complete enough that there's nothing left to choose. If a brief contains "something like", "make it look good", or "pick a name", it isn't ready.
 3. Tell the subagent to stop and report back rather than decide, if it hits a gap in the spec.
-4. Review the result against your design, not just for correctness, and fix any drift yourself.
+4. Delegate design implementation in small pieces, one at a time, so each can be checked fully before the next.
+
+Audit design work far more strictly than other work. "Works" is not the bar; "matches the design exactly" is:
+
+- Compare the result to your spec item by item: every name, string, value, style, and state. Read the full diff.
+- See it, don't infer it: render or run it, and screenshot it when the tooling allows.
+- Reject any deviation, however small, and any decision the subagent made that the spec didn't. No "close enough", no "it's arguably better".
+- Fix drift yourself or re-brief with the exact correction. Never accept and patch later.
 
 ## Delegate — default to a subagent when
 

@@ -22,15 +22,9 @@ curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.s
 irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/install.ps1 | iex
 ```
 
-The install script will also register the plugin marketplaces for [claude-hud](https://github.com/jarrodwatts/claude-hud), [ponytail](https://github.com/DietrichGebert/ponytail), and [improve](https://github.com/shadcn/improve). After it completes, open Claude Code and run:
+The install script also installs the plugins in `plugins-manifest.txt` and sets up claude-hud's status line, so there's nothing to run by hand. Restart Claude Code afterwards to pick everything up.
 
-```
-/plugin install claude-hud@claude-hud
-/plugin install ponytail@ponytail
-/plugin install improve@improve
-```
-
-Then restart Claude Code.
+`bootstrap.sh` installs Claude Code if it's missing, then runs `install.sh`, so both paths install the same things.
 
 ## What gets installed
 
@@ -39,9 +33,11 @@ Then restart Claude Code.
 | Path | Purpose |
 |------|---------|
 | `~/.claude/CLAUDE.md` | Global instructions: workflow orchestration, task management, core principles |
-| `~/.claude/settings.json` | Plugin config: status line, enabled plugins, marketplace registration |
+| `~/.claude/settings.json` | Defaults: `outputStyle: Concise`, `autoCompactWindow: 200000` |
 
 ### Plugins
+
+Installed (or updated) with `claude plugin install`, from `plugins-manifest.txt` — one `<plugin> <owner/repo>` per line.
 
 | Plugin | What it does |
 |--------|-------------|
@@ -49,9 +45,9 @@ Then restart Claude Code.
 | [ponytail](https://github.com/DietrichGebert/ponytail) | "Lazy senior dev" mode — pushes toward the simplest solution that works (stdlib first, no unrequested abstractions) before writing code. |
 | [improve](https://github.com/shadcn/improve) | Audits a codebase (bugs, security, perf, tech debt) and writes self-contained implementation plans to `plans/` for another agent or model to execute. Never edits code itself. |
 
-All three require a one-time `/plugin install <name>@<name>` inside Claude Code (see [Install](#install)) — the install script registers the marketplaces but can't install the plugin binaries itself.
+claude-hud's status line is written by claude-hud's own setup script, which picks the right command for the platform (bash/zsh, Git Bash, or PowerShell on Windows). If you already have a status line that isn't claude-hud's, it's left alone.
 
-**Troubleshooting:** ponytail and claude-hud both run lifecycle hooks via Node.js. If `node` isn't on `PATH` (including the non-interactive shell PATH — a common gotcha with nvm/Nix), ponytail's mode tracking silently fails to activate and claude-hud's status line won't render. The install scripts warn if `node` is missing. Older Claude Code versions can also hit an `EXDEV: cross-device link not permitted` error installing claude-hud on Linux — the install scripts run `claude update` first to avoid it; if you still hit it, run `mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude` and retry the plugin install in that session.
+**Troubleshooting:** ponytail and claude-hud both run via Node.js. If `node` isn't on `PATH` (including the non-interactive shell PATH — a common gotcha with nvm/Nix), ponytail's mode tracking silently fails to activate and claude-hud's status line won't render. The install scripts warn if `node` is missing. The status line points at the `node` binary found at install time, so after switching Node versions, re-run the install script (or `/claude-hud:setup`). Older Claude Code versions can also hit an `EXDEV: cross-device link not permitted` error installing claude-hud on Linux — the install scripts run `claude update` first to avoid it; if you still hit it, run `mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude` and retry the plugin install in that session.
 
 ### Commands (slash commands)
 
@@ -128,11 +124,11 @@ Rules and skills activate automatically — no commands needed.
 
 ## Updating settings
 
-`settings.json` in this repo is deep-merged into `~/.claude/settings.json` on install — existing keys are preserved. To add a new plugin or setting, edit `settings.json` and the install scripts will pick it up on next run.
+`settings.json` in this repo is merged into `~/.claude/settings.json` additively: keys you don't have yet are added, and values you already have are never changed (so environment-specific settings survive). If `~/.claude/settings.json` isn't valid JSON, it's left untouched. To add a plugin, add a line to `plugins-manifest.txt`.
 
 ## Re-installing / updating
 
-Re-run the one-liner. It overwrites existing files with the latest from `main`.
+Re-run the one-liner. Commands, rules, and skills are overwritten with the latest from `main`, and plugins are updated. If `~/.claude/CLAUDE.md` differs from the repo's version, you're asked whether to replace it (default: no, keep yours).
 
 ## My personal usage
 

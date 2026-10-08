@@ -26,6 +26,58 @@ The install script also installs the plugins in `plugins-manifest.txt` and sets 
 
 `bootstrap.sh` installs Claude Code if it's missing, then runs `install.sh`, so both paths install the same things.
 
+**Optional: orchestrator mode** — Opus plans and audits, subagents run on Haiku (see [Orchestrator mode](#orchestrator-mode-optional)):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash                    # enable
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash -s -- --disable    # disable
+```
+
+## My personal usage
+
+```bash
+useradd -m -s /bin/bash user
+passwd user
+usermod -aG sudo user
+su - user
+
+CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
+
+OR
+
+IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
+```
+
+## Orchestrator mode (optional)
+
+An opt-in drop-in, separate from the default install: Opus 5.5 plans and audits, and every subagent runs on Haiku 5.5 at xhigh effort.
+
+```bash
+# enable
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash
+# disable
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash -s -- --disable
+```
+
+```powershell
+# enable
+irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.ps1 | iex
+# disable
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.ps1))) -Disable
+```
+
+Enabling it:
+
+| Change | Why |
+|--------|-----|
+| `model: opus`, `effortLevel: medium`, `advisorModel: opus` | Opus 5.5 main session; Haiku subagents (and the main session) can consult an Opus advisor at decision points |
+| `PreToolUse` hook on `Agent` | Rewrites every subagent call to `model: haiku`, `effort: xhigh` — a hard force, regardless of what the main session asks for |
+| `Agent(Plan)` in `permissions.deny` | Planning stays with the main session (deny rules apply even with `--dangerously-skip-permissions`) |
+| `~/.claude/rules/orchestration.md` | When to do work yourself vs delegate, how to brief a subagent, and auditing every result |
+| `UserPromptSubmit` and `PostToolUse` reminder hooks | A one-line delegation nudge with each prompt, and an "unverified — check it" nudge each time a subagent returns |
+
+Disabling restores the `model`, `effortLevel`, and `advisorModel` you had before, and removes only what enabling added. Requires Node.js and Claude Code v2.1.293+ (the script runs `claude update`). Check which model each subagent ran on with `/tasks`.
+
 ## What gets installed
 
 ### Global config
@@ -129,21 +181,6 @@ Rules and skills activate automatically — no commands needed.
 ## Re-installing / updating
 
 Re-run the one-liner. Commands, rules, and skills are overwritten with the latest from `main`, and plugins are updated. If `~/.claude/CLAUDE.md` differs from the repo's version, you're asked whether to replace it (default: no, keep yours).
-
-## My personal usage
-
-```bash
-useradd -m -s /bin/bash user
-passwd user
-usermod -aG sudo user
-su - user
-
-CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
-
-OR
-
-IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
-```
 
 ## Credits
 

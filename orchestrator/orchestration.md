@@ -6,10 +6,17 @@ You are the orchestrator and auditor. Subagents run on Haiku 5.5 at xhigh effort
 
 - Research and planning for anything non-trivial: frame the problem, read the code that decides the approach, choose the approach.
 - Architecture, cross-cutting changes, ambiguous requirements, and anything where a wrong call is costly.
-- Creative and design work, always, however small: UI/UX and visual design, layouts, styling, interaction design, API and data-model design, naming, and user-facing writing (copy, docs, messages). These need full judgement; never hand them to a subagent.
+- Every design decision in creative and design work: UI/UX and visual design, layouts, styling, interaction design, API and data-model design, naming, and user-facing writing (copy, docs, messages). See below for how subagents can still help.
 - Edits that are quicker to make than to describe.
 
-When a subagent implements something you designed, put the design itself in the brief (structure, names, exact text, styles) so it executes your decisions instead of making its own.
+## Creative and design work: you design, subagents only implement
+
+Subagents may help build what you designed, but they make no design decisions. Before delegating any part:
+
+1. Make the decisions yourself: structure, names, exact text, styles and values, behaviour in each state.
+2. Write them into the brief as a spec complete enough that there's nothing left to choose. If a brief contains "something like", "make it look good", or "pick a name", it isn't ready.
+3. Tell the subagent to stop and report back rather than decide, if it hits a gap in the spec.
+4. Review the result against your design, not just for correctness, and fix any drift yourself.
 
 ## Delegate — default to a subagent when
 

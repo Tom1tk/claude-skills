@@ -26,6 +26,28 @@ The install script also installs the plugins in `plugins-manifest.txt` and sets 
 
 `bootstrap.sh` installs Claude Code if it's missing, then runs `install.sh`, so both paths install the same things.
 
+**Optional: orchestrator mode** — Opus plans and audits, subagents run on Haiku (see [Orchestrator mode](#orchestrator-mode-optional)):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash                    # enable
+curl -fsSL https://raw.githubusercontent.com/Tom1tk/claude-skills/main/orchestrator.sh | bash -s -- --disable    # disable
+```
+
+## My personal usage
+
+```bash
+useradd -m -s /bin/bash user
+passwd user
+usermod -aG sudo user
+su - user
+
+CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
+
+OR
+
+IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
+```
+
 ## Orchestrator mode (optional)
 
 An opt-in drop-in, separate from the default install: Opus 5.5 plans and audits, and every subagent runs on Haiku 5.5 at xhigh effort.
@@ -159,21 +181,6 @@ Rules and skills activate automatically — no commands needed.
 ## Re-installing / updating
 
 Re-run the one-liner. Commands, rules, and skills are overwritten with the latest from `main`, and plugins are updated. If `~/.claude/CLAUDE.md` differs from the repo's version, you're asked whether to replace it (default: no, keep yours).
-
-## My personal usage
-
-```bash
-useradd -m -s /bin/bash user
-passwd user
-usermod -aG sudo user
-su - user
-
-CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
-
-OR
-
-IS_SANDBOX=1 CLAUDE_CODE_NO_FLICKER=1 claude --dangerously-skip-permissions
-```
 
 ## Credits
 

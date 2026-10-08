@@ -11,5 +11,4 @@
 Use with caution:
 - Enable for trusted, well-defined plans
 - Disable for exploratory work
-- Never use dangerously-skip-permissions flag
 - Configure `allowedTools` in `~/.claude.json` instead

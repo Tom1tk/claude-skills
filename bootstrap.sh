@@ -2,98 +2,22 @@
 set -e
 
 REPO_RAW="https://raw.githubusercontent.com/Tom1tk/claude-skills/main"
-CLAUDE_DIR="$HOME/.claude"
-COMMANDS_DIR="$CLAUDE_DIR/commands"
 
 # ── 1. Install Claude Code ────────────────────────────────────────────────────
 if command -v claude &>/dev/null; then
   echo "✓ Claude Code already installed ($(claude --version 2>/dev/null || echo 'version unknown'))"
-  # Update anyway — avoids known bugs on older versions (e.g. claude-hud's
-  # EXDEV install error) and unlocks newer features (e.g. outputStyle,
-  # added in 2.1.237)
-  echo "Checking for Claude Code updates..."
-  claude update || true
 else
   echo "Installing Claude Code..."
   curl -fsSL https://claude.ai/install.sh | bash
   echo "✓ Claude Code installed"
 fi
 
-# ── 2. Install skills ─────────────────────────────────────────────────────────
+# The native installer puts claude in ~/.local/bin, which may not be on PATH
+# in this shell yet — install.sh needs it for updates and plugins
+export PATH="$HOME/.local/bin:$PATH"
+
+# ── 2. Install everything else (same as install.sh) ───────────────────────────
 echo ""
-echo "Installing Claude skills..."
-mkdir -p "$COMMANDS_DIR"
+curl -fsSL "$REPO_RAW/install.sh" | bash
 
-curl -fsSL "$REPO_RAW/CLAUDE.md" -o "$CLAUDE_DIR/CLAUDE.md"
-echo "✓ CLAUDE.md installed"
-
-curl -fsSL "$REPO_RAW/manifest.txt" | while read cmd; do
-  [ -z "$cmd" ] && continue
-  curl -fsSL "$REPO_RAW/commands/${cmd}.md" -o "$COMMANDS_DIR/${cmd}.md"
-  echo "✓ /$cmd installed"
-done
-
-# ── 3. Merge settings (plugins: claude-hud, ponytail, improve) ──────────────
-SETTINGS_FILE="$CLAUDE_DIR/settings.json"
-TMP_PATCH=$(mktemp)
-curl -fsSL "$REPO_RAW/settings.json" -o "$TMP_PATCH"
-
-if command -v python3 &>/dev/null; then
-  python3 - "$SETTINGS_FILE" "$TMP_PATCH" <<'PYEOF'
-import json, sys
-settings_path, patch_path = sys.argv[1], sys.argv[2]
-
-def deep_merge(base, patch):
-    for k, v in patch.items():
-        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
-            deep_merge(base[k], v)
-        else:
-            base[k] = v
-    return base
-
-try:
-    with open(settings_path) as f:
-        existing = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    existing = {}
-
-with open(patch_path) as f:
-    patch = json.load(f)
-
-with open(settings_path, 'w') as f:
-    json.dump(deep_merge(existing, patch), f, indent=2)
-    f.write('\n')
-PYEOF
-  echo "✓ settings.json merged (plugins)"
-elif command -v jq &>/dev/null; then
-  if [ -f "$SETTINGS_FILE" ]; then
-    jq -s '.[0] * .[1]' "$SETTINGS_FILE" "$TMP_PATCH" > "${SETTINGS_FILE}.tmp" \
-      && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
-  else
-    cp "$TMP_PATCH" "$SETTINGS_FILE"
-  fi
-  echo "✓ settings.json merged (plugins)"
-else
-  echo "⚠ python3/jq not found — skipping settings.json merge"
-fi
-rm -f "$TMP_PATCH"
-
-if ! command -v node &>/dev/null; then
-  echo ""
-  echo "⚠ Node.js not found on PATH."
-  echo "  ponytail and claude-hud run lifecycle hooks via Node — without it,"
-  echo "  ponytail's mode tracking won't activate (non-blocking hook error on"
-  echo "  every prompt) and claude-hud's status line won't render."
-  echo "  Install Node.js, then confirm it's on PATH for non-interactive"
-  echo "  shells too (nvm/Nix users: this is a common gotcha)."
-fi
-
-# ── 4. Done ───────────────────────────────────────────────────────────────────
-echo ""
-echo "All done! Run 'claude' to start and log in on first use."
-echo ""
-echo "To finish plugin setup, open Claude Code and run:"
-echo "  /plugin install claude-hud@claude-hud"
-echo "  /plugin install ponytail@ponytail"
-echo "  /plugin install improve@improve"
-echo "Then restart Claude Code."
+echo "Run 'claude' to start and log in on first use."

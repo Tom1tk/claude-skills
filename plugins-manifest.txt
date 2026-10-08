@@ -1,0 +1,3 @@
+claude-hud jarrodwatts/claude-hud
+ponytail DietrichGebert/ponytail
+improve shadcn/improve

@@ -1,4 +1,10 @@
 {
   "outputStyle": "Concise",
-  "autoCompactWindow": 200000
+  "autoCompactWindow": 200000,
+  "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
 }

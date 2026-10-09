@@ -85,7 +85,7 @@ Disabling restores the `model`, `effortLevel`, and `advisorModel` you had before
 | Path | Purpose |
 |------|---------|
 | `~/.claude/CLAUDE.md` | Global instructions: workflow orchestration, task management, core principles |
-| `~/.claude/settings.json` | Defaults: `outputStyle: Concise`, `autoCompactWindow: 200000` |
+| `~/.claude/settings.json` | Defaults: `outputStyle: Concise`, `autoCompactWindow: 200000`, and no Claude attribution on commits or PRs (`attribution` commit/PR text empty, no session link, `includeCoAuthoredBy: false`) |
 
 ### Plugins
 
